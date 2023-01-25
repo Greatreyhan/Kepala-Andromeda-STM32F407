@@ -11,6 +11,7 @@
 
 #include <stdbool.h>
 #include <string.h>
+#include <math.h>
 
 // Define
 #define HEADER1	0x55
@@ -23,6 +24,27 @@
 #define ALGORITHM_COLOR_RECOGNITION 0x0004
 #define ALGORITHM_TAG_RECOGNITION 0x0005
 #define ALGORITHM_OBJECT_CLASSIFICATION 0x0006
+
+// ---------------------------------- START FOR COMPETITION PURPOUSE ---------------------------------------
+#define VICTIM_HEIGHT 10
+
+typedef enum{
+	HOME_AREA = 0x0001U,
+	PILE_OF_WOOD_OBSTACLE = 0x0002U,
+	CLIMBING_OBSTACLE = 0x0003U,
+	ROOM_1_AREA = 0x0004U,
+	PYRAMID_OBSTACLE = 0x0005U,
+	ROOM_2_AREA = 0x0006U,
+	ERROR_DETECTION = 0x0009U
+}huskylens_area_identification_t;
+
+typedef enum{
+	VICTIM_ON_RIGHT = 0x0001U,
+	VICTIM_ON_LEFT = 0x0002U,
+	VICTIM_DETECTION_ERROR = 0x0003U
+}huskylens_victim_detection_t;
+
+// ---------------------------------- END FOR COMPETITION PURPOUSE ---------------------------------------
 
 typedef struct{
 	uint16_t num_block_arr;
@@ -124,5 +146,15 @@ huskylens_status_t husky_forget(void);
 // Save Screen Shoot
 huskylens_status_t husky_saveScreenShoot(void);
 
+
+// ---------------------------------- START FOR COMPETITION PURPOUSE ---------------------------------------
+
+huskylens_area_identification_t husky_get_position(void);
+
+huskylens_victim_detection_t husky_victim_position(void);
+
+double husky_distance_prediction(void);
+
+// ---------------------------------- END FOR COMPETITION PURPOUSE ---------------------------------------
 
 #endif

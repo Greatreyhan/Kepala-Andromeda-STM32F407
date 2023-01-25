@@ -274,3 +274,40 @@ huskylens_status_t husky_saveScreenShoot(void){
 	
 	return HUSKY_OK;
 }
+
+// ---------------------------------- START FOR COMPETITION PURPOUSE ---------------------------------------
+
+huskylens_area_identification_t husky_get_position(void){
+		huskylens_block_t block = husky_getBlocks();
+		if(block.id == 0x00001) return HOME_AREA;
+		else if(block.id == 0x0002) return PILE_OF_WOOD_OBSTACLE;
+		else if(block.id == 0x0003) return CLIMBING_OBSTACLE;
+		else if(block.id == 0x0004) return ROOM_1_AREA;
+		else if(block.id == 0x0005) return PYRAMID_OBSTACLE;
+		else if(block.id == 0x0006) return ROOM_2_AREA;
+		else return ERROR_DETECTION;
+	return ERROR_DETECTION;
+}
+
+huskylens_victim_detection_t husky_victim_position(void){
+		huskylens_block_t block = husky_getBlocks();
+		if(block.id == 0x0001){
+			if(block.X_center <= 160) return VICTIM_ON_LEFT;
+			else if(block.X_center > 160) return VICTIM_ON_RIGHT;
+		}
+	return VICTIM_DETECTION_ERROR;
+}
+
+double husky_distance_prediction(void){
+		huskylens_block_t block = husky_getBlocks();
+		if(block.id == 0x0001){
+			double angle, distance;
+			
+			angle = atan(block.height/block.width);
+			distance = block.height/angle;
+			
+		}
+	return 0;
+}
+
+// ---------------------------------- END FOR COMPETITION PURPOUSE ---------------------------------------

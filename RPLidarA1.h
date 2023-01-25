@@ -60,6 +60,32 @@ typedef enum
   LIDAR_NO_GOOD_NODE  = 0x03U
 } lidar_StatusTypeDef;
 
+//---------------------------------------------------------- START FOR COMPETITION PURPOUSE ------------------------------------------------------//
+
+#define DIST_STOPPER 100
+#define MAX_FRONT_TO_TURN 25
+#define MAX_LEFT_TO_TURN 25
+#define MAX_RIGHT_TO_TURN 25
+#define MAX_FRONT_AFTER_CLIMB 75
+#define MAX_FRONT_BEFORE_ROOM_1 75
+#define MAX_FRONT_ROOM_1 50
+
+typedef enum
+{
+  LIDAR_LEFT_DIRECTION       = 0x00U,
+  LIDAR_RIGHT_DIRECTION    = 0x01U,
+	LIDAR_NULL = 0x02U
+} lidar_home_status_t;
+
+typedef enum
+{
+  START_TURN       = 0x00U,
+  WAIT_FOR_TURN   = 0x01U,
+	TURN_ERROR = 0x02U
+} lidar_turn_status_t;
+
+//---------------------------------------------------------- END FOR COMPETITION PURPOUSE ------------------------------------------------------//
+
 typedef struct __lidar_rec_Handle
 {	/*utilities */
 	UART_HandleTypeDef* huart;
@@ -79,6 +105,7 @@ typedef struct __lidar_rec_Handle
 	float degF[45];
 	float degG[45];
 	float degH[45];
+	uint8_t message;
 } lidar_HandleTypeDef;
 
 typedef struct{
@@ -169,4 +196,15 @@ lidar_StatusTypeDef lidar_get_scanmode(lidar_HandleTypeDef* lidar, lidar_conf_t*
 lidar_StatusTypeDef lidar_get_express_scan(lidar_HandleTypeDef* lidar, lidar_data_scan_t* scan);
 lidar_StatusTypeDef lidar_read_express_scan(lidar_HandleTypeDef* lidar, lidar_data_scan_t* scan);
 
+//------------------------------------------------------ FUNGSI UNTUK LOMBA --------------------------------------
+lidar_StatusTypeDef lidar_get_average_reading(lidar_HandleTypeDef* lidar);
+lidar_StatusTypeDef lidar_set_distance(lidar_HandleTypeDef* lidar, double distance);
+lidar_home_status_t lidar_from_home(lidar_HandleTypeDef* lidar);
+double lidar_read_front(lidar_HandleTypeDef* lidar);
+double lidar_read_left(lidar_HandleTypeDef* lidar);
+double lidar_read_right(lidar_HandleTypeDef* lidar);
+double lidar_read_back(lidar_HandleTypeDef* lidar);
+lidar_turn_status_t lidar_turn_left(lidar_HandleTypeDef* lidar);
+lidar_turn_status_t lidar_turn_right(lidar_HandleTypeDef* lidar);
+lidar_turn_status_t lidar_after_climb(lidar_HandleTypeDef* lidar);
  #endif

@@ -36,3 +36,4 @@ kepala_f407\huskylens_driver.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ha
 kepala_f407\huskylens_driver.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
 kepala_f407\huskylens_driver.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 kepala_f407\huskylens_driver.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+kepala_f407\huskylens_driver.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h

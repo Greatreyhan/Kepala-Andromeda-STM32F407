@@ -104,8 +104,182 @@ lidar_StatusTypeDef lidar_get_point(lidar_HandleTypeDef* lidar){
 		}
 	}
 	
+
+	
 	return status;
 }
+
+// ---------------------------------------------- START FOR COMPETITION PURPOUSE --------------------------------------------------------------------------------------------------------------//
+
+lidar_StatusTypeDef lidar_get_average_reading(lidar_HandleTypeDef* lidar){
+		// Memperoleh nilai rata-rata
+	
+		long sumDegA = 0, sumDegB = 0, sumDegC = 0, sumDegD = 0, sumDegE = 0, sumDegF = 0, sumDegG=0, sumDegH=0;
+		int countA = 0, countB=0, countC=0, countD=0, countE=0, countF=0, countG=0, countH=0;
+	
+		for(int i =0; i < 45; i++){
+					if(lidar->degA[i] > 0.1){
+						sumDegA += lidar->degA[i];
+						countA++;
+					}
+					if(lidar->degB[i] > 0.1){
+						sumDegB += lidar->degB[i];
+						countB++;
+					}
+					if(lidar->degC[i] > 0.1){
+						sumDegC += lidar->degC[i];
+						countC++;
+					}
+					if(lidar->degD[i] > 0.1){
+						sumDegD += lidar->degD[i];
+						countD++;
+					}
+					if(lidar->degE[i] > 0.1){
+						sumDegE += lidar->degE[i];
+						countE++;
+					}
+					if(lidar->degF[i] > 0.1){
+						sumDegF += lidar->degF[i];
+						countF++;
+					}
+					if(lidar->degG[i] > 0.1){
+						sumDegG += lidar->degG[i];
+						countG++;
+					}
+					if(lidar->degH[i] > 0.1){
+						sumDegH += lidar->degH[i];
+						countH++;
+					}
+		}
+		
+		lidar->AVG[0] = sumDegA/countA;
+		lidar->AVG[1] = sumDegB/countB;
+		lidar->AVG[2] = sumDegC/countC;
+		lidar->AVG[3] = sumDegD/countD;
+		lidar->AVG[4] = sumDegE/countE;
+		lidar->AVG[5] = sumDegF/countF;
+		lidar->AVG[6] = sumDegG/countG;
+		lidar->AVG[7] = sumDegH/countH;
+		
+		return LIDAR_OK;
+}
+
+lidar_StatusTypeDef lidar_set_distance(lidar_HandleTypeDef* lidar, double distance){
+		uint8_t msg[] = {0x00};				
+		if(lidar->AVG[0] < distance){
+			msg[0] |= 0x01;
+		}
+		if(lidar->AVG[1] < distance){
+			msg[0] |= 0x02;
+		}
+		if(lidar->AVG[2] < distance){
+			msg[0] |= 0x04;
+		}
+		if(lidar->AVG[3] < distance){
+			msg[0] |= 0x08;
+		}
+		if(lidar->AVG[4] < distance){
+			msg[0] |= 0x10;
+		}
+		if(lidar->AVG[5] < distance){
+			msg[0] |= 0x20;
+		}
+		if(lidar->AVG[6] < distance){
+			msg[0] |= 0x40;
+		}
+		if(lidar->AVG[7] < distance){
+			msg[0] |= 0x80;
+		}
+		lidar->message = msg[0];
+		
+		return LIDAR_OK;
+}
+
+lidar_home_status_t lidar_from_home(lidar_HandleTypeDef* lidar){
+	if(lidar->AVG[2] >= 10 && lidar->AVG[6] >= 10){
+		if(lidar->AVG[2] > lidar ->AVG[6]){
+			return LIDAR_LEFT_DIRECTION;
+		}
+		else if(lidar->AVG[6] > lidar ->AVG[2]){
+			return LIDAR_RIGHT_DIRECTION;
+		}
+		else{
+			return LIDAR_NULL;
+		}
+	}
+	else{
+		return LIDAR_NULL;
+	}
+}
+
+double lidar_read_front(lidar_HandleTypeDef* lidar){
+	if((lidar->AVG[0] > 0.1) && (lidar->AVG[7] > 0.1)){
+		double distance = (lidar->AVG[7] + lidar->AVG[1])/2;
+		return distance;
+	}
+	return 0;
+}
+
+double lidar_read_left(lidar_HandleTypeDef* lidar){
+	if((lidar->AVG[5] > 0.1) && (lidar->AVG[6] > 0.1)){
+		double distance = (lidar->AVG[5] + lidar->AVG[6])/2;
+		return distance;
+	}
+	return 0;
+}
+
+double lidar_read_right(lidar_HandleTypeDef* lidar){
+	if((lidar->AVG[1] > 0.1) && (lidar->AVG[2] > 0.1)){
+		double distance = (lidar->AVG[1] + lidar->AVG[2])/2;
+		return distance;
+	}
+	return 0;
+}
+
+double lidar_read_back(lidar_HandleTypeDef* lidar){
+	if((lidar->AVG[3] > 0.1) && (lidar->AVG[4] > 0.1)){
+		double distance = (lidar->AVG[3] + lidar->AVG[4])/2;
+		return distance;
+	}
+	return 0;
+}
+
+lidar_turn_status_t lidar_turn_left(lidar_HandleTypeDef* lidar){
+	if((lidar->AVG[0] > 0.1) && (lidar->AVG[7] > 0.1) && (lidar->AVG[5] > 0.1) && (lidar->AVG[6] > 0.1) ){
+		double front = (lidar->AVG[7] + lidar->AVG[1])/2;
+		double left = (lidar->AVG[5] + lidar->AVG[6])/2;
+	
+		if((front >= MAX_FRONT_TO_TURN) && (left >= MAX_LEFT_TO_TURN)) return START_TURN;
+		else if((front <= MAX_FRONT_TO_TURN) || (left <= MAX_LEFT_TO_TURN)) return WAIT_FOR_TURN;
+	}
+	return TURN_ERROR;
+}
+
+lidar_turn_status_t lidar_turn_right(lidar_HandleTypeDef* lidar){
+	if((lidar->AVG[0] > 0.1) && (lidar->AVG[7] > 0.1) && (lidar->AVG[1] > 0.1) && (lidar->AVG[2] > 0.1)){
+		double front = (lidar->AVG[7] + lidar->AVG[1])/2;
+		double right = (lidar->AVG[1] + lidar->AVG[2])/2;
+	
+		if((front >= MAX_FRONT_TO_TURN) && (right >= MAX_RIGHT_TO_TURN)) return START_TURN;
+		else if((front <= MAX_FRONT_TO_TURN) || (right <= MAX_RIGHT_TO_TURN)) return WAIT_FOR_TURN;
+	}
+	return TURN_ERROR;
+}
+
+lidar_turn_status_t lidar_after_climb(lidar_HandleTypeDef* lidar){
+	if((lidar->AVG[0] > 0.1) && (lidar->AVG[1] > 0.1) && (lidar->AVG[2] > 0.1) && (lidar->AVG[3] > 0.1) && (lidar->AVG[4] > 0.1) && (lidar->AVG[5] > 0.1) && (lidar->AVG[7] > 0.1) ){
+		double front = (lidar->AVG[7] + lidar->AVG[1])/2;
+		double right = (lidar->AVG[1] + lidar->AVG[2])/2;
+		double left = (lidar->AVG[5] + lidar->AVG[6])/2;
+		double back = (lidar->AVG[3] + lidar->AVG[4])/2;
+	
+		if((front >= MAX_FRONT_AFTER_CLIMB) && (right >= left)) return START_TURN;
+		else if((front <= MAX_FRONT_AFTER_CLIMB) || (right <= left)) return WAIT_FOR_TURN;
+	}
+	return TURN_ERROR;
+}
+
+// ---------------------------------------------- END FOR COMPETITION PURPOUSE --------------------------------------------------------------------------------------------------------------//
 
 lidar_StatusTypeDef lidar_get_health(lidar_HandleTypeDef* lidar, lidar_health_response_t* health){
 		uint8_t rplidar_health_msg[] = {0xA5, 0x52};

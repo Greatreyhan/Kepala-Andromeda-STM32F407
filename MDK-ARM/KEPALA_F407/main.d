@@ -33,11 +33,11 @@ kepala_f407\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h
 kepala_f407\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
 kepala_f407\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 kepala_f407\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
-kepala_f407\main.o: ..\..\KEPALA_F407\AMG8833.h
+kepala_f407\main.o: ../../KEPALA_F407/AMG8833.h
 kepala_f407\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
-kepala_f407\main.o: ..\..\KEPALA_F407\DWT_Delay.h
-kepala_f407\main.o: ..\..\KEPALA_F407\Huskylens_driver.h
+kepala_f407\main.o: ../../KEPALA_F407/DWT_Delay.h
+kepala_f407\main.o: ../../KEPALA_F407/Huskylens_driver.h
 kepala_f407\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
-kepala_f407\main.o: ..\..\KEPALA_F407\Ping_driver.h
-kepala_f407\main.o: ..\..\KEPALA_F407\RPLidarA1.h
 kepala_f407\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
+kepala_f407\main.o: ../../KEPALA_F407/Ping_driver.h
+kepala_f407\main.o: ../../KEPALA_F407/RPLidarA1.h

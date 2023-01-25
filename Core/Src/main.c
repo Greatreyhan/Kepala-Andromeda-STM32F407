@@ -34,6 +34,9 @@
 /* USER CODE BEGIN PTD */
 lidar_HandleTypeDef lidar;
 lidar_StatusTypeDef status;
+lidar_home_status_t home;
+huskylens_area_identification_t area;
+huskylens_victim_detection_t victim;
 amg8833_temperature_table_t fire;
 huskylens_info_t huskAll;
 huskylens_status_t huskStatus;
@@ -57,8 +60,8 @@ I2C_HandleTypeDef hi2c2;
 
 TIM_HandleTypeDef htim1;
 
-UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
+UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
 
@@ -70,15 +73,20 @@ static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_I2C2_Init(void);
 static void MX_TIM1_Init(void);
-static void MX_USART1_UART_Init(void);
 static void MX_USART2_UART_Init(void);
+static void MX_USART3_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+double victimDistance = 0;
 double pingDistance=0;
+double front = 0;
+double left = 0;
+double right = 0;
+double back = 0;
 /* USER CODE END 0 */
 
 /**
@@ -88,7 +96,7 @@ double pingDistance=0;
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	lidar.huart = &huart2;
+//	lidar.huart = &huart2;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -112,37 +120,37 @@ int main(void)
   MX_I2C1_Init();
   MX_I2C2_Init();
   MX_TIM1_Init();
-  MX_USART1_UART_Init();
   MX_USART2_UART_Init();
+  MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
 
 	//------------------------- START LIDAR CONFIG ------------------------------------------
 	
-	TIM1->CCR1 = (100*2000/100);
-	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-	
-	lidar_setup(&lidar);
-	HAL_Delay(1000);
-	
+//	TIM1->CCR1 = (100*2000/100);
+//	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+//	
+//	lidar_setup(&lidar);
+//	HAL_Delay(1000);
+//	
 	//------------------------- END LIDAR CONFIG --------------------------------------------
 	//------------------------- START AMG8833 CONFIG ----------------------------------------
 	
-	if(amg8833_setup(&hi2c1)){
-		HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-	}
+//	if(amg8833_setup(&hi2c1)){
+//		HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+//	}
 	
 	//------------------------- END AMG8833 CONFIG ------------------------------------------
 	//------------------------- START HUSKYLENS CONFIG --------------------------------------
 	
 	if(husky_setup(&hi2c2) == HUSKY_OK){
-		HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
 	}
 	huskAll = husky_getAllArrowBlock();
 	//------------------------- END HUSKYLENS CONFIG ----------------------------------------
 	//------------------------- START PING CONFIG ----------------------------------------
 	
-	pingCapit.PING_PIN = GPIO_PIN_8;
-	pingCapit.PING_PORT = GPIOB;
+//	pingCapit.PING_PIN = GPIO_PIN_8;
+//	pingCapit.PING_PORT = GPIOB;
 	
 	//------------------------- END PING CONFIG ----------------------------------------
 	
@@ -155,108 +163,38 @@ int main(void)
   {
 		
 		//------------------------- START LIDAR READING ------------------------------------------
-		status = lidar_start_scan(&lidar);
-		if(status == LIDAR_OK){
-			while(1){
-				status = lidar_get_point(&lidar);
-				
-				long sumDegA = 0, sumDegB = 0, sumDegC = 0, sumDegD = 0, sumDegE = 0, sumDegF = 0, sumDegG=0, sumDegH=0;
-				int countA = 0, countB=0, countC=0, countD=0, countE=0, countF=0, countG=0, countH=0;
-				for(int i =0; i < 45; i++){
-					if(lidar.degA[i] > 0.1){
-						sumDegA += lidar.degA[i];
-						countA++;
-					}
-					if(lidar.degB[i] > 0.1){
-						sumDegB += lidar.degB[i];
-						countB++;
-					}
-					if(lidar.degC[i] > 0.1){
-						sumDegC += lidar.degC[i];
-						countC++;
-					}
-					if(lidar.degD[i] > 0.1){
-						sumDegD += lidar.degD[i];
-						countD++;
-					}
-					if(lidar.degE[i] > 0.1){
-						sumDegE += lidar.degE[i];
-						countE++;
-					}
-					if(lidar.degF[i] > 0.1){
-						sumDegF += lidar.degF[i];
-						countF++;
-					}
-					if(lidar.degG[i] > 0.1){
-						sumDegG += lidar.degG[i];
-						countG++;
-					}
-					if(lidar.degH[i] > 0.1){
-						sumDegH += lidar.degH[i];
-						countH++;
-					}
-				}
-				lidar.AVG[0] = sumDegA/countA;
-				lidar.AVG[1] = sumDegB/countB;
-				lidar.AVG[2] = sumDegC/countC;
-				lidar.AVG[3] = sumDegD/countD;
-				lidar.AVG[4] = sumDegE/countE;
-				lidar.AVG[5] = sumDegF/countF;
-				lidar.AVG[6] = sumDegG/countG;
-				lidar.AVG[7] = sumDegH/countH;
-				
-				uint8_t msg[] = {0x00};				
-				if(sumDegA/countA < DIST_STOPPER){
-					msg[0] |= 0x01;
-				}
-				if(sumDegB/countB < DIST_STOPPER){
-					msg[0] |= 0x02;
-				}
-				if(sumDegC/countC < DIST_STOPPER){
-					msg[0] |= 0x04;
-				}
-				if(sumDegD/countD < DIST_STOPPER){
-					msg[0] |= 0x08;
-				}
-				if(sumDegE/countE < DIST_STOPPER){
-					msg[0] |= 0x10;
-				}
-				if(sumDegF/countF < DIST_STOPPER){
-					msg[0] |= 0x20;
-				}
-				if(sumDegG/countG < DIST_STOPPER){
-					msg[0] |= 0x40;
-				}
-				if(sumDegA/countH < DIST_STOPPER){
-					msg[0] |= 0x80;
-				}
-//				HAL_UART_Transmit(&huart2, msg, 1, 100);
-				
+//		status = lidar_start_scan(&lidar);
+//		if(status == LIDAR_OK){
+//			while(1){
+//				status = lidar_get_point(&lidar);
+//				status = lidar_get_average_reading(&lidar);
+//				status = lidar_set_distance(&lidar, 50);
+//				home =  lidar_from_home(&lidar);
+//				front = lidar_read_front(&lidar);
+//				left = lidar_read_left(&lidar);
+//				right = lidar_read_right(&lidar);
+//				back = lidar_read_back(&lidar);
+//				
 		//------------------------- START AMG8833 READING --------------------------------------
 		
-		fire = amg8833_get_temp();	
-//		for(int i = 0; i < 64; i++){
-//			if(vec.pix[i] >= 36){
-//				HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
-//				addr = i;
-//			}
-//		}
-		
+//		fire = amg8833_get_temp();	
 		//------------------------- END AMG8833 READING ----------------------------------------
 		
 		//------------------------- START AMG8833 READING --------------------------------------
-		
 		blocks = husky_getBlocks();
-		
+		area = husky_get_position();
+//		victim = husky_victim_position();
+		HAL_Delay(10);
+//		victimDistance = husky_distance_prediction();
 		//------------------------- END AMG8833 READING ----------------------------------------
 		//------------------------- START PING READING --------------------------------------
 		
-		pingDistance = ping_read(pingCapit);
+//		pingDistance = ping_read(pingCapit);
 		
 		//------------------------- END PING READING ----------------------------------------
 				
-			}
-		}
+//			}
+//		}
 		//------------------------- END LIDAR READING ------------------------------------------
   
     /* USER CODE END WHILE */
@@ -456,39 +394,6 @@ static void MX_TIM1_Init(void)
 }
 
 /**
-  * @brief USART1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_USART1_UART_Init(void)
-{
-
-  /* USER CODE BEGIN USART1_Init 0 */
-
-  /* USER CODE END USART1_Init 0 */
-
-  /* USER CODE BEGIN USART1_Init 1 */
-
-  /* USER CODE END USART1_Init 1 */
-  huart1.Instance = USART1;
-  huart1.Init.BaudRate = 115200;
-  huart1.Init.WordLength = UART_WORDLENGTH_8B;
-  huart1.Init.StopBits = UART_STOPBITS_1;
-  huart1.Init.Parity = UART_PARITY_NONE;
-  huart1.Init.Mode = UART_MODE_TX_RX;
-  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
-  if (HAL_UART_Init(&huart1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN USART1_Init 2 */
-
-  /* USER CODE END USART1_Init 2 */
-
-}
-
-/**
   * @brief USART2 Initialization Function
   * @param None
   * @retval None
@@ -522,18 +427,63 @@ static void MX_USART2_UART_Init(void)
 }
 
 /**
+  * @brief USART3 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART3_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART3_Init 0 */
+
+  /* USER CODE END USART3_Init 0 */
+
+  /* USER CODE BEGIN USART3_Init 1 */
+
+  /* USER CODE END USART3_Init 1 */
+  huart3.Instance = USART3;
+  huart3.Init.BaudRate = 115200;
+  huart3.Init.WordLength = UART_WORDLENGTH_8B;
+  huart3.Init.StopBits = UART_STOPBITS_1;
+  huart3.Init.Parity = UART_PARITY_NONE;
+  huart3.Init.Mode = UART_MODE_TX_RX;
+  huart3.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart3.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART3_Init 2 */
+
+  /* USER CODE END USART3_Init 2 */
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
   */
 static void MX_GPIO_Init(void)
 {
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOD_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : PD12 */
+  GPIO_InitStruct.Pin = GPIO_PIN_12;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
 }
 
