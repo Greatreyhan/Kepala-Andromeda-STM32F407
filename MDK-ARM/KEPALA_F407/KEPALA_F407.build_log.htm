@@ -27,16 +27,18 @@ Project File Date:  01/24/2023
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'KEPALA_F407'
-compiling main.c...
-../../KEPALA_F407/Huskylens_driver.h(160): warning:  #1-D: last line of file ends without a newline
-  #endif
-../../KEPALA_F407/Ping_driver.h(19): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Src/main.c: 2 warnings, 0 errors
+compiling AMG8833.c...
+..\AMG8833.c(17): warning:  #550-D: variable "status"  was set but never used
+    uint8_t status;
+..\AMG8833.c(47): warning:  #940-D: missing return statement at end of non-void function "amg8833_setup" 
+  }
+..\AMG8833.c(240): warning:  #1-D: last line of file ends without a newline
+  //---------------------------------------------- END FOR COMPETITION PURPOUSE -------------------------------------------
+..\AMG8833.c: 3 warnings, 0 errors
 linking...
-Program Size: Code=9274 RO-data=450 RW-data=32 ZI-data=2024  
+Program Size: Code=9946 RO-data=450 RW-data=28 ZI-data=2524  
 FromELF: creating hex file...
-"KEPALA_F407\KEPALA_F407.axf" - 0 Error(s), 2 Warning(s).
+"KEPALA_F407\KEPALA_F407.axf" - 0 Error(s), 3 Warning(s).
 
 <h2>Software Packages used:</h2>
 

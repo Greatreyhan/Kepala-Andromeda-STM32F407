@@ -222,3 +222,19 @@ amg8833_temperature_table_t amg8833_get_temp(void){
 	}
 	return handler;
 }
+
+//---------------------------------------------- START FOR COMPETITION PURPOUSE -----------------------------------------
+
+amg8833_fire_t amg8844_detect_fire(void){
+	
+	uint8_t buf[128];
+	for(int i = 0; i < 128; i = i+2){
+		amg8833_readData((AMG8833_T01L+i), &buf[i], 1);
+		amg8833_readData((AMG8833_T01L+i+1), &buf[(i+1)], 1);
+		if((((double) (((buf[i+1] & 0x07) << 8)| buf[i]))*0.25) > 40.0) return FIRE_DETECTED;
+	}
+	return FIRE_ERROR;
+	
+}
+
+//---------------------------------------------- END FOR COMPETITION PURPOUSE -------------------------------------------

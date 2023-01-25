@@ -54,6 +54,16 @@
 #define AMG8833_INTEN_ACTIVE 0x01
 #define AMG8833_INTEN_REACTIVE 0x00
 
+//---------------------------------------------- START FOR COMPETITION PURPOUSE -----------------------------------------
+
+typedef enum{
+	FIRE_DETECTED = 0x0001,
+	FIRE_NOT_FOUND = 0x0002,
+	FIRE_ERROR = 0x0003,
+}amg8833_fire_t;
+
+//---------------------------------------------- END FOR COMPETITION PURPOUSE -------------------------------------------
+
 // Status Register
 typedef struct{
 	uint8_t INTF;
@@ -160,4 +170,11 @@ amg8833_interrupt_table_t amg8833_get_int_table(void);
 
 // Get Temperature
 amg8833_temperature_table_t amg8833_get_temp(void);
+
+//---------------------------------------------- START FOR COMPETITION PURPOUSE -----------------------------------------
+
+amg8833_fire_t amg8844_detect_fire(void);
+
+//---------------------------------------------- END FOR COMPETITION PURPOUSE -------------------------------------------
+
 #endif 

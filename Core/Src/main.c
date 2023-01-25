@@ -42,6 +42,7 @@ huskylens_info_t huskAll;
 huskylens_status_t huskStatus;
 huskylens_block_t blocks;
 Ping_t pingCapit;
+amg8833_fire_t fireDetection;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -135,17 +136,17 @@ int main(void)
 	//------------------------- END LIDAR CONFIG --------------------------------------------
 	//------------------------- START AMG8833 CONFIG ----------------------------------------
 	
-//	if(amg8833_setup(&hi2c1)){
-//		HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-//	}
+	if(amg8833_setup(&hi2c1)){
+		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+	}
 	
 	//------------------------- END AMG8833 CONFIG ------------------------------------------
 	//------------------------- START HUSKYLENS CONFIG --------------------------------------
-	
-	if(husky_setup(&hi2c2) == HUSKY_OK){
-		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
-	}
-	huskAll = husky_getAllArrowBlock();
+//	
+//	if(husky_setup(&hi2c2) == HUSKY_OK){
+//		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+//	}
+//	huskAll = husky_getAllArrowBlock();
 	//------------------------- END HUSKYLENS CONFIG ----------------------------------------
 	//------------------------- START PING CONFIG ----------------------------------------
 	
@@ -176,13 +177,13 @@ int main(void)
 //				back = lidar_read_back(&lidar);
 //				
 		//------------------------- START AMG8833 READING --------------------------------------
-		
-//		fire = amg8833_get_temp();	
+			
+		fireDetection =  amg8844_detect_fire();
 		//------------------------- END AMG8833 READING ----------------------------------------
 		
 		//------------------------- START AMG8833 READING --------------------------------------
-		blocks = husky_getBlocks();
-		area = husky_get_position();
+//		blocks = husky_getBlocks();
+//		area = husky_get_position();
 //		victim = husky_victim_position();
 		HAL_Delay(10);
 //		victimDistance = husky_distance_prediction();

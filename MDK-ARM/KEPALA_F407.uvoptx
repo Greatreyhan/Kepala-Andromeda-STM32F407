@@ -153,17 +153,12 @@
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>blocks</ItemText>
+          <ItemText>fire</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>victimDistance</ItemText>
-        </Ww>
-        <Ww>
-          <count>2</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>victim</ItemText>
+          <ItemText>fireDetection</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>
