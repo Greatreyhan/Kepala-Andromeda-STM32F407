@@ -136,9 +136,9 @@ int main(void)
 	//------------------------- END LIDAR CONFIG --------------------------------------------
 	//------------------------- START AMG8833 CONFIG ----------------------------------------
 	
-	if(amg8833_setup(&hi2c1)){
-		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
-	}
+//	if(amg8833_setup(&hi2c1)){
+//		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+//	}
 	
 	//------------------------- END AMG8833 CONFIG ------------------------------------------
 	//------------------------- START HUSKYLENS CONFIG --------------------------------------
@@ -150,8 +150,8 @@ int main(void)
 	//------------------------- END HUSKYLENS CONFIG ----------------------------------------
 	//------------------------- START PING CONFIG ----------------------------------------
 	
-//	pingCapit.PING_PIN = GPIO_PIN_8;
-//	pingCapit.PING_PORT = GPIOB;
+	pingCapit.PING_PIN = GPIO_PIN_8;
+	pingCapit.PING_PORT = GPIOB;
 	
 	//------------------------- END PING CONFIG ----------------------------------------
 	
@@ -178,7 +178,7 @@ int main(void)
 //				
 		//------------------------- START AMG8833 READING --------------------------------------
 			
-		fireDetection =  amg8844_detect_fire();
+//		fireDetection =  amg8844_detect_fire();
 		//------------------------- END AMG8833 READING ----------------------------------------
 		
 		//------------------------- START AMG8833 READING --------------------------------------
@@ -190,7 +190,7 @@ int main(void)
 		//------------------------- END AMG8833 READING ----------------------------------------
 		//------------------------- START PING READING --------------------------------------
 		
-//		pingDistance = ping_read(pingCapit);
+		pingDistance = ping_read(pingCapit);
 		
 		//------------------------- END PING READING ----------------------------------------
 				

@@ -27,16 +27,16 @@ Project File Date:  01/24/2023
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'KEPALA_F407'
-compiling AMG8833.c...
-..\AMG8833.c(17): warning:  #550-D: variable "status"  was set but never used
-    uint8_t status;
-..\AMG8833.c(47): warning:  #940-D: missing return statement at end of non-void function "amg8833_setup" 
+compiling Ping_driver.c...
+..\Ping_driver.h(19): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\Ping_driver.c(54): warning:  #1-D: last line of file ends without a newline
   }
-..\AMG8833.c(240): warning:  #1-D: last line of file ends without a newline
-  //---------------------------------------------- END FOR COMPETITION PURPOUSE -------------------------------------------
-..\AMG8833.c: 3 warnings, 0 errors
+..\Ping_driver.c(39): warning:  #177-D: variable "state"  was declared but never referenced
+  		GPIO_PinState state;
+..\Ping_driver.c: 3 warnings, 0 errors
 linking...
-Program Size: Code=9946 RO-data=450 RW-data=28 ZI-data=2524  
+Program Size: Code=8594 RO-data=450 RW-data=32 ZI-data=2008  
 FromELF: creating hex file...
 "KEPALA_F407\KEPALA_F407.axf" - 0 Error(s), 3 Warning(s).
 
@@ -62,7 +62,7 @@ Package Vendor: Keil
 
    * Component: ARM::CMSIS:CORE:5.6.0
       Include file:  CMSIS\Core\Include\tz_context.h
-Build Time Elapsed:  00:00:04
+Build Time Elapsed:  00:00:03
 </pre>
 </body>
 </html>

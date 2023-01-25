@@ -48,7 +48,7 @@ double ping_read(Ping_t ping){
 			DWT_Delay_us(1);
 		}
 		duration = (tickB-tickA);
-		distance = (duration)/600;
+		distance = (duration)/124;
 		
 		return distance;
 }
